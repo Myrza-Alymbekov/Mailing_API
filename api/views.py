@@ -1,15 +1,30 @@
 from django.shortcuts import render
+from django.db.models import Count
+
 from rest_framework import viewsets
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
 
 from .models import Mailing, Client, Message, Tag
 from .serializers import MailingSerializer, ClientSerializer, MessageSerializer, TagSerializer
 
 
+class MailingPagePagination(PageNumberPagination):
+    page_size = 10
+
+
 class MailingViewSet(viewsets.ModelViewSet):
-    queryset = Mailing.objects.all()
+    queryset = Mailing.objects.annotate(num_messages=Count('message'))
     serializer_class = MailingSerializer
+    pagination_class = MailingPagePagination
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
 
 
 class ClientViewSet(viewsets.ModelViewSet):
