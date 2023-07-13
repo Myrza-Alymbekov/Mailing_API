@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from rest_framework import viewsets
+import requests
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -45,3 +45,27 @@ class MailingStatisticsAPIView(APIView):
         }
 
         return Response(statistics)
+
+
+token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjA2MDc1NTEsImlzcyI6ImZhYnJpcXVlIiwibmFtZSI6Imh0dHBzOi8vdC5tZS9hdXJhcml6ZWQifQ.A1mo_ukujEUhQnCwR6eFWpgUuyQIXe_RAvarnIGhkEA'
+
+
+class MyAPIView(APIView):
+    @staticmethod
+    def get(request):
+        data = {
+            "id": 1,
+            "phone": 4451245234,
+            "text": "something"
+        }
+        headers = {'Authorization': f'Bearer {token}'}
+
+        response = requests.post('https://probe.fbrq.cloud/v1/send/1', json=data, headers=headers)
+
+        # Проверяем код состояния ответа
+        if response.status_code == 200:
+            data = response.json()
+            # Обработка ответа
+            return Response({'message': data}, status=response.status_code)
+        else:
+            return Response({'message': 'Ошибка выполнения запроса'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
