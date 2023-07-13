@@ -21,16 +21,20 @@ class MailingSerializer(serializers.ModelSerializer):
     in_progress_messages = serializers.SerializerMethodField()
     not_sent_messages = serializers.SerializerMethodField()
 
-    def get_total_messages(self, obj):
+    @staticmethod
+    def get_total_messages(obj):
         return obj.message_set.count()
 
-    def get_sent_messages(self, obj):
+    @staticmethod
+    def get_sent_messages(obj):
         return obj.message_set.filter(send_status='Доставлено').count()
 
-    def get_in_progress_messages(self, obj):
+    @staticmethod
+    def get_in_progress_messages(obj):
         return obj.message_set.filter(send_status='В процессе').count()
 
-    def get_not_sent_messages(self, obj):
+    @staticmethod
+    def get_not_sent_messages(obj):
         return obj.message_set.filter(send_status='Не отправлено').count()
 
     class Meta:

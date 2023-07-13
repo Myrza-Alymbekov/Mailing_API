@@ -1,10 +1,7 @@
-import requests
-
-from django.shortcuts import render
 from django.db.models import Count
 
 from rest_framework.pagination import PageNumberPagination
-from rest_framework import viewsets, status
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -26,7 +23,6 @@ class MailingViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
-
 
 
 class ClientViewSet(viewsets.ModelViewSet):
@@ -62,27 +58,3 @@ class MailingStatisticsAPIView(APIView):
         }
 
         return Response(statistics)
-
-
-token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjA2MDc1NTEsImlzcyI6ImZhYnJpcXVlIiwibmFtZSI6Imh0dHBzOi8vdC5tZS9hdXJhcml6ZWQifQ.A1mo_ukujEUhQnCwR6eFWpgUuyQIXe_RAvarnIGhkEA'
-
-
-class MyAPIView(APIView):
-    @staticmethod
-    def get(request):
-        data = {
-            "id": 1,
-            "phone": 4451245234,
-            "text": "something"
-        }
-        headers = {'Authorization': f'Bearer {token}'}
-
-        response = requests.post('https://probe.fbrq.cloud/v1/send/1', json=data, headers=headers)
-
-        # Проверяем код состояния ответа
-        if response.status_code == 200:
-            data = response.json()
-            # Обработка ответа
-            return Response({'message': data}, status=response.status_code)
-        else:
-            return Response({'message': 'Ошибка выполнения запроса'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

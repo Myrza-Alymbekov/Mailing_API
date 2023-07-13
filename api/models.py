@@ -66,13 +66,14 @@ class Client(models.Model):
 
 
 class Message(models.Model):
-    creation_time = models.DateTimeField(auto_now_add=True, verbose_name='Дата Создания')
+    creation_time = models.DateTimeField(verbose_name='Дата Создания')
     STATUS_CHOICES = (
         ('Не отправлено', 'Не отправлено'),
         ('В процессе', 'В процессе'),
         ('Доставлено', 'Доставлено'),
     )
-    send_status = models.CharField(max_length=255, choices=STATUS_CHOICES, default='Не отправлено', verbose_name='Статус Сообщения')
+    send_status = models.CharField(max_length=255, choices=STATUS_CHOICES, default='В процессе',
+                                   verbose_name='Статус Сообщения')
     mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name='Рассылка')
     client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='Клиент')
 
