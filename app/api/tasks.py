@@ -1,12 +1,13 @@
 import os
+import pytz
+import requests
+
 from datetime import datetime
 
-import requests
 from celery import shared_task
-import pytz
 
-from .models import Mailing, Message
-from project.celery import app
+from .models import Message
+
 
 token = os.environ.get('TOKEN')
 
@@ -17,19 +18,17 @@ def schedule_mailing(mailing_id):
 
     for message in messages:
         client_timezone = pytz.timezone(message.client.timezone)
+        local_timezone = pytz.timezone('Europe/Moscow')
 
-        # Преобразование времени начала рассылки во временную зону клиента
-        client_start_time = datetime.now().astimezone(client_timezone)
+        client_start_time = pytz.utc.localize(datetime.utcnow()).astimezone(client_timezone)
+        current_time = pytz.utc.localize(datetime.utcnow()).astimezone(local_timezone)
 
-        current_time = datetime.now(client_timezone)
-
-        if client_start_time <= current_time:
-            send_mailing(message_id=message.id)
-        else:
-            delay = (client_start_time - current_time).total_seconds()
-
+        if client_start_time < current_time:
+            delay = (current_time.utcoffset() - client_start_time.utcoffset()).total_seconds()
             # Отправка сообщения в фоновом режиме с задержкой
-            send_mailing.apply_async(message_id=message.id, countdown=delay)
+            send_mailing.apply_async(args=[message.id], countdown=delay)
+        else:
+            send_mailing(message_id=message.id)
 
 
 @shared_task()
