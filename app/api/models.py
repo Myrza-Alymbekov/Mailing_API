@@ -40,7 +40,7 @@ class Mailing(models.Model):
     start_time = models.DateTimeField(verbose_name="Дата и Время Запуска")
     text = models.TextField(verbose_name='Текст сообщения')
     operator_code = models.CharField(max_length=3, choices=OPERATOR_CHOICES, verbose_name='Код Оператора')
-    tag = models.ManyToManyField(Tag, verbose_name='Теги')
+    tag = models.ForeignKey(Tag, on_delete=models.SET(0), verbose_name='Теги')
     end_time = models.DateTimeField(verbose_name='Дата и Время Окончания')
 
     def __str__(self):
@@ -54,7 +54,7 @@ class Mailing(models.Model):
 class Client(models.Model):
     phone_number = models.CharField(max_length=7, verbose_name='Номер Телефона')
     operator_code = models.CharField(max_length=3, choices=OPERATOR_CHOICES, verbose_name='Код Оператора')
-    tag = models.ManyToManyField(Tag, verbose_name='Теги')
+    tag = models.ForeignKey(Tag, on_delete=models.SET(0), verbose_name='Теги')
     timezone = models.CharField(max_length=100, choices=TIMEZONE_CHOICES, verbose_name='Часовой Пояс')
 
     def __str__(self):

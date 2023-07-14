@@ -29,19 +29,13 @@ def create_messages_for_clients(sender, instance, created, **kwargs):
         creation_time = instance.start_time  # Используем время начала рассылки
 
         for client in clients:
-            if client.tag.filter(pk__in=[tag.pk for tag in tags]).exists():
-                messages = Message.objects.filter(mailing=instance, client=client)
-                if not messages.exists():
-                    Message.objects.create(
-                        creation_time=creation_time,
-                        mailing=instance,
-                        client=client
-                    )
+            if client.tag == instance.tag:
+                Message.objects.create(creation_time=instance.start_time, mailing=instance, client=client)
 
         if instance.start_time <= current_time <= instance.end_time:
             schedule_mailing(instance.id)
 
         if instance.start_time > current_time:
             delay = (instance.start_time - current_time).total_seconds()
-            # schedule_mailing.apply_async(args=[instance.id], countdown=delay)
+            schedule_mailing.apply_async(args=[instance.id], countdown=delay)
 
