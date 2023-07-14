@@ -47,7 +47,7 @@ services:
     volumes:
         - redis_data:/data
     ports:
-        - "6380:6379"
+        - "6379:6379"
   flower:
     image: mher/flower:0.9.7
     command: [ 'flower', '--broker=redis://redis:6379', '--port=5555' ]
