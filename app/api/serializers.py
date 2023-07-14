@@ -3,9 +3,18 @@ from .models import Mailing, Client, Message, Tag
 
 
 class ClientSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Client
         fields = '__all__'
+
+    def validate(self, data):
+        phone_number = data.get('phone_number')
+
+        if not phone_number.isdigit():
+            raise serializers.ValidationError("Поле должно содержать только числа.")
+
+        return data
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -41,6 +50,15 @@ class MailingSerializer(serializers.ModelSerializer):
         model = Mailing
         fields = ('id', 'start_time', 'text', 'operator_code', 'tag', 'end_time', 'messages', 'total_messages',
                   'sent_messages', 'in_progress_messages', 'not_sent_messages')
+
+    def validate(self, data):
+        start_time = data.get('start_time')
+        end_time = data.get('end_time')
+
+        if start_time and end_time and end_time < start_time:
+            raise serializers.ValidationError("Дата и время окончания не может быть раньше даты и времени начала.")
+
+        return data
 
 
 class TagSerializer(serializers.ModelSerializer):
