@@ -1,4 +1,3 @@
-import requests
 from django.db.models import Count
 
 from rest_framework.pagination import PageNumberPagination
@@ -59,32 +58,3 @@ class MailingStatisticsAPIView(APIView):
         }
 
         return Response(statistics)
-
-
-token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjA2MDc1NTEsImlzcyI6ImZhYnJpcXVlIiwibmFtZSI6Imh0dHBzOi8vdC5tZS9hdXJhcml6ZWQifQ.A1mo_ukujEUhQnCwR6eFWpgUuyQIXe_RAvarnIGhkEA'
-
-
-class MyAPi(APIView):
-    @staticmethod
-    def get(request, message_id=9):
-        message = Message.objects.all().first()
-        data = {
-            "id": 1,
-            "phone": 384758748,
-            "text": message.mailing.text
-        }
-        headers = {'Authorization': f'Bearer {token}'}
-
-        response = requests.post('https://probe.fbrq.cloud/v1/send/1', json=data, headers=headers)
-
-        # Проверяем код состояния ответа
-        if response.status_code == 200:
-            message.status = 'Доставлено'
-            message.save()
-            return Response({'data': response.json()})
-        else:
-            message.status = 'Не отправлено'
-            message.save()
-            return Response({'data': response.status_code})
-
-
