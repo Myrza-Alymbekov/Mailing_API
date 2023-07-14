@@ -31,6 +31,7 @@ def schedule_mailing(mailing_id):
             send_mailing(message_id=message.id)
 
 
+
 @shared_task()
 def send_mailing(message_id):
     message = Message.objects.get(id=message_id)
