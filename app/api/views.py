@@ -58,3 +58,4 @@ class MailingStatisticsAPIView(APIView):
         }
 
         return Response(statistics)
+

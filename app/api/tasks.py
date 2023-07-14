@@ -1,13 +1,13 @@
+import os
 from datetime import datetime
 
 import requests
 from celery import shared_task
 from pytz import timezone
 
-from api.models import Mailing, Message
+from .models import Mailing, Message
 
-token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjA2MDc1NTEsImlzcyI6ImZhYnJpcXVlIiwibmFtZSI6Imh0dHBzOi8vdC5tZS9hdXJhcml6ZWQifQ.A1mo_ukujEUhQnCwR6eFWpgUuyQIXe_RAvarnIGhkEA'
-
+token = os.environ.get('TOKEN')
 
 @shared_task
 def send_mailing(message_id):

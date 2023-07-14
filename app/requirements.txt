@@ -1,3 +1,5 @@
 djangorestframework==3.14.0
 requests
-celery
+celery[redis]
+psycopg2-binary
+redis
