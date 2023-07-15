@@ -50,4 +50,3 @@ def send_mailing(message_id):
     else:
         message.send_status = 'Не отправлено'
     message.save()
-
