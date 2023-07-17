@@ -1,7 +1,7 @@
 from django.db.models import Count
 
 from rest_framework.pagination import PageNumberPagination
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -15,6 +15,11 @@ class MailingPagePagination(PageNumberPagination):
 
 
 class MailingViewSet(viewsets.ModelViewSet):
+
+    """
+    API для просмотра, создания, редактирования и удаления рассылок.
+    """
+
     queryset = Mailing.objects.annotate(num_messages=Count('message'))
     serializer_class = MailingSerializer
     pagination_class = MailingPagePagination
@@ -26,21 +31,40 @@ class MailingViewSet(viewsets.ModelViewSet):
 
 
 class ClientViewSet(viewsets.ModelViewSet):
+
+    """
+    API для просмотра, создания, редактирования и удаления клиентов.
+    """
+
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
 
 
-class MessageViewSet(viewsets.ModelViewSet):
+class MessageViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
+
+    """
+    API для просмотра и удаления сообщения.
+    """
+
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
 
 
 class TagViewSet(viewsets.ModelViewSet):
+
+    """
+    API для просмотра, создания, редактирования и удаления тегов.
+    """
+
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
 
 class MailingStatisticsAPIView(APIView):
+
+    """
+    API для просмотра статистики рассылок.
+    """
 
     @staticmethod
     def get(request):
